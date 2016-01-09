@@ -407,8 +407,15 @@ type_for_internalformat(const GLenum internalformat)
  * is also needed, and returned on @buffer_out. Caller is responsible
  * to free both if the call is successful.
  *
+ * For texture targets, we also use this function to check if the /resource/
+ * (defined in the ARB_internalformat_query2 spec as an object of the
+ * appropriate type that has been created with <internalformat> and <target>)
+ * is supported by the implementation. If the texture creation fails, then the
+ * resource is unsupported.
+ *
  * Returns true if it was possible to create the texture. False
- * otherwhise.
+ * otherwise (unsupported /resource/).
+ *
  */
 bool
 create_texture(const GLenum target,
@@ -476,13 +483,8 @@ create_texture(const GLenum target,
                         piglit_get_gl_enum_name(target));
         }
 
-        if (!piglit_check_gl_error(GL_NO_ERROR)) {
+        if (!piglit_check_gl_error(GL_NO_ERROR))
                 result = false;
-                fprintf(stderr, "\tError creating a texture with "
-                        "target %s, internalformat %s\n",
-                        piglit_get_gl_enum_name(target),
-                        piglit_get_gl_enum_name(internalformat));
-        }
 
         if (!result) {
                 glDeleteTextures(1, &tex);
@@ -518,7 +520,7 @@ test_data_check_against_get_tex_level_parameter(test_data *data,
 
         result = create_texture(target, internalformat, &tex, &buffer);
         if (!result)
-                return result;
+                return test_data_is_zero(data);
 
         /* For cube maps GetTexLevelParameter receives one of the face
          * targets, or proxy */
