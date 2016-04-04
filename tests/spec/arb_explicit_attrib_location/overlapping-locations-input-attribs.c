@@ -62,7 +62,7 @@ compile_shader(void)
 {
 	GLuint element_buf;
 	unsigned int indices[6] = { 0, 1, 2, 0, 2, 3 };
-	float vertex_data[4][11] = {
+        double vertex_data[4][11] = {
 		/* vertex     color0:green    color1:blue     color2:yellow */
 		{-1.0, -1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 0.0},
 		{-1.0,  1.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 0.0},
@@ -104,14 +104,18 @@ compile_shader(void)
 	char *vert;
 	asprintf(&vert, vert_template, locations_in_shader ?
 		 "#extension GL_ARB_explicit_attrib_location : require\n"
-		 "layout (location = 0) in vec2 vertex;\n"
-		 "layout (location = 1) in vec3 color0;\n"
-		 "layout (location = 1) in vec3 color1;\n"
-		 "layout (location = 1) in vec3 color2;\n" :
-		 "in vec2 vertex;\n"
-		 "in vec3 color0;\n"
-		 "in vec3 color1;\n"
-		 "in vec3 color2;\n");
+		 "#extension GL_ARB_gpu_shader_fp64 : require\n"
+		 "#extension GL_ARB_vertex_attrib_64bit : require\n"
+		 "layout (location = 0) in dvec2 vertex;\n"
+		 "layout (location = 1) in dvec3 color0;\n"
+		 "layout (location = 1) in dvec3 color1;\n"
+		 "layout (location = 1) in dvec3 color2;\n" :
+		 "#extension GL_ARB_gpu_shader_fp64 : require\n"
+		 "#extension GL_ARB_vertex_attrib_64bit : require\n"
+		 "in dvec2 vertex;\n"
+		 "in dvec3 color0;\n"
+		 "in dvec3 color1;\n"
+		 "in dvec3 color2;\n");
 
 	prog = piglit_build_simple_program_unlinked(vert, frag);
 	if (!locations_in_shader) {
@@ -136,7 +140,7 @@ compile_shader(void)
 		     GL_STREAM_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 11*sizeof(float),
+	glVertexAttribLPointer(0, 2, GL_DOUBLE, 11*sizeof(double),
 			      (void *) 0);
 	glEnableVertexAttribArray(1);
 
@@ -178,6 +182,8 @@ piglit_init(int argc, char **argv)
 		piglit_require_extension("GL_ARB_explicit_attrib_location");
 
 	piglit_require_extension("GL_ARB_vertex_array_object");
+	piglit_require_extension("GL_ARB_vertex_attrib_64bit");
+	piglit_require_extension("GL_ARB_gpu_shader_fp64");
 	piglit_require_GLSL_version(130);
 	compile_shader();
 	if (!piglit_check_gl_error(GL_NO_ERROR))
@@ -203,8 +209,8 @@ piglit_display()
 		 * only one active attribute pointer set to the shared location
 		 * '1' at a time.
 		 */
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float),
-				      (void *) ((2 + 3*i) * sizeof(float)));
+		glVertexAttribLPointer(1, 3, GL_DOUBLE, 11*sizeof(double),
+				      (void *) ((2 + 3*i) * sizeof(double)));
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void *) 0);
 		pass = piglit_probe_rect_rgba(0, 0, piglit_width, piglit_height,
