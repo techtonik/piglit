@@ -78,6 +78,14 @@ def select_source(bin_, filename, mustpass, extra_args):
         return iter_deqp_test_cases(
             gen_caselist_txt(bin_, filename, extra_args))
 
+def select_source_txt(bin_, filename, mustpass, extra_args):
+    """Return either the mustpass list in txt format or the generated list."""
+    if options.OPTIONS.deqp_mustpass:
+        return iter_deqp_test_cases(mustpass)
+    else:
+        return iter_deqp_test_cases(
+            gen_caselist_txt(bin_, filename, extra_args))
+
 
 def make_profile(test_list, test_class):
     """Create a TestProfile instance."""
@@ -146,10 +154,8 @@ def iter_deqp_test_cases(case_file):
                 continue
             elif line.startswith('TEST:'):
                 yield line[len('TEST:'):].strip()
-            else:
-                raise exceptions.PiglitFatalError(
-                    'deqp: {}:{}: ill-formed line'.format(case_file, i))
-
+            else: # We assume that the line is just the name of the test
+                yield line
 
 @six.add_metaclass(abc.ABCMeta)
 class DEQPBaseTest(Test):

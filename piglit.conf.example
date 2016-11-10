@@ -99,6 +99,13 @@ testB
 ; Can be overwritten by PIGLIT_DEQP_VK_BIN environment variable
 ;bin=/home/knuth/Vulkan-CTS/external/vulkancts/modules/vulkan/deqp-vk
 
+; Path to the test case list for deqp-vk. You can also set this with
+; the environment variable PIGLIT_DEQP_VK_MUSTPASS. Piglit will run
+; the subset of dEQP-VK tests if this option is set. Note that in this
+; case the mustpass file is in txt format, in opposite to other
+; deqp-xxx mustpass list where they are on xml format.
+;mustpasslist=/home/knuth/Vulkan-CTS/external/vulkancts/mustpass/1.0.1/vk-default.txt
+
 ; Space-separated list of extra command line arguments for deqp-vk. The
 ; option is not required. The environment variable PIGLIT_DEQP_VK_EXTRA_ARGS
 ; overrides the value set here.

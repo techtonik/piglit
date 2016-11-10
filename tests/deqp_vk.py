@@ -30,6 +30,7 @@ from __future__ import (
 import re
 
 from framework.test import deqp
+from framework.options import OPTIONS
 
 __all__ = ['profile']
 
@@ -37,6 +38,10 @@ __all__ = ['profile']
 _DEQP_VK_BIN = deqp.get_option('PIGLIT_DEQP_VK_BIN',
                                ('deqp-vk', 'bin'),
                                required=True)
+
+_DEQP_MUSTPASS = deqp.get_option('PIGLIT_DEQP_VK_MUSTPASS',
+                                 ('deqp-vk', 'mustpasslist'),
+                                 required=OPTIONS.deqp_mustpass)
 
 _EXTRA_ARGS = deqp.get_option('PIGLIT_DEQP_VK_EXTRA_ARGS',
                               ('deqp-vk', 'extra_args'),
@@ -72,7 +77,6 @@ class DEQPVKTest(deqp.DEQPBaseTest):
 
 
 profile = deqp.make_profile(  # pylint: disable=invalid-name
-    deqp.iter_deqp_test_cases(
-        deqp.gen_caselist_txt(_DEQP_VK_BIN, 'dEQP-VK-cases.txt',
-                              _EXTRA_ARGS)),
+    deqp.select_source_txt(_DEQP_VK_BIN, 'dEQP-VK-cases.txt',
+                           _DEQP_MUSTPASS, _EXTRA_ARGS),
     DEQPVKTest)
