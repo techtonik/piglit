@@ -91,7 +91,7 @@ test_create_window(void *test_data)
 	test_setup(&dpy);
 
 	surf = peglCreatePlatformWindowSurfaceEXT(dpy, EGL_NO_CONFIG_KHR,
-					      /*native_window*/ NULL,
+					      (NativeWindowType) NULL,
 					      /*attrib_list*/ NULL);
 	if (surf) {
 		printf("eglCreatePlatformWindowSurface incorrectly succeeded\n");
@@ -122,7 +122,7 @@ test_create_pixmap(void *test_data)
 	test_setup(&dpy);
 
 	surf = peglCreatePlatformPixmapSurfaceEXT(dpy, EGL_NO_CONFIG_KHR,
-					      /*native_window*/ NULL,
+					      (NativeWindowType) NULL,
 					      /*attrib_list*/ NULL);
 	if (surf) {
 		printf("eglCreatePlatformPixmapSurface incorrectly succeeded\n");
